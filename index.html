@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Dokumente-V01</title>
+<link rel="manifest" href="manifest.json">
+<link rel="stylesheet" href="filterstyles.css">
+
+<script src="indexeddb_manager.js" defer></script>
+
+</head>
+<body>
+    <div class="kopf">
+        <!--
+        <h3>Dokumenten-Anzeige</h3>
+        -->
+    </div>
+    <div class="menu">
+        <button onclick="showContent('home')">Home</button>
+        <button onclick="showContent('addDokumente')">Dokumente hinzufügen</button>
+        <button onclick="showContent('restorebackup')">Restore/Backup</button>
+        <button onclick="showContent('filteredit')">Filtergestaltung</button>
+        <button onclick="showContent('handbuch')">Handbuch</button>
+        <button onclick="showContent('logout')">❌ Seite schließen</button>
+    </div>
+    <div class="content active" id="home">
+        <h3 class="panel">Filter für die Anzeige der vorhandenen Dokumente</h3>
+        <div id="filter-wrapper"></div>
+        <div id="filter-output"></div>
+
+        <div id="vorhandeneDokuemnte">
+            <h3>Vorhandene Dokumente  Anzeigen</h3>
+            <!--
+            <p>Button-Anzeige "Ersetzen/Löschen":</p>
+            -->
+            <div>
+                <label>Button-Anzeige "Ersetzen/Löschen":</label>   
+                <input type="radio" id="optionJa" name="fortfahren" value="ja">
+                <label for="optionJa">Ja</label>
+                <input type="radio" id="optionNein" name="fortfahren" value="nein" checked>
+                <label for="optionNein">Nein</label><br>
+            </div>
+            <div id="itemList"> Links</div>
+        </div>
+    </div>
+    <div class="content" id="addDokumente">
+        <div class="panel">
+            <h3>Dokumente hinzufügen</h3>
+            <input type="file" id="fileInput" class="btn btn-success" multiple>
+        </div>
+        <div class="panel" id="backupDokumente" >
+            <br>
+            <div id="anzdoks"></div>
+            <div id="dokadd"></div>
+        </div>
+    </div>
+    <div class="content" id="restorebackup">
+        <div class="panel" id="restoreDokumente">
+            <h3>Dokumente</h3>
+            <br>
+            <label>Restore - Dokumente laden</label>
+            <br>
+            <input type="file" id="restoreButton" class="btn btn-success" name="Restore">
+            <div id="restoreFile"></div>
+            <br>
+            <label>Backup - Dokumente speichern</label>
+            <br>
+            <button id="backup" class="btn btn-success">Backup-Start</button> 
+        </div>
+        <div class="panel">
+            <h3>Filterparameter</h3>
+            <br>
+            <label>Restore - Filterparameter laden</label>
+            <br>
+            <input type="file" id="fileinput" class="btn btn-success" name="fileinput" >
+            <pre id="filename"></pre>
+            <br>
+            <label>Backup - Filterparameter speichern</label>
+            <br>
+            <button type="button" id="backupfilterparameter" class="btn btn-success" onclick="backupfilterparameter()">Backup-Start</button>
+        </div>
+    </div>
+    <div class="content" id="filteredit">
+        <div>
+            <h1 class="comparison-view"> Gestaltung der Filter</h1>
+        </div>
+        <div class="comparison-view">
+            <div class="panel">
+                <h2 class="panel-title">Bisherige Filterparameter</h2>
+                <div id="currentFilters"></div>
+            </div>
+            <div class="panel">
+                <h2 class="panel-title">Geänderte Filterparameter</h2>
+                <div id="newFilters"></div>
+                <button id="applyChanges" class="btn btn-success" style="margin-top:0px; margin-left: 15px;">Änderungen übernehmen</button>
+                <button id="deleteChanges" class="btn btn-verwerfen" style="margin-top: 0px;">Änderungen verwerfen</button>
+            </div>
+        </div>
+        <div>
+            <br>
+            <h3 style="margin-bottom: -2px;">Backup - Filterparameter in eine Datei speichern</h3>
+            <button type="button" class="btn btn-success" onclick="backupfilterparameter()">Backup-Start</button>
+        </div>
+    </div>
+    <div class="content" id="handbuch">
+        <div class="panel"> 
+            <h2>Menüpunkt: "Home"</h2>
+            <h3>Welche Dokumente könnte ich in dieser APP speichern?</h3>
+            <ul>
+                <li>alle Dokumente, die Dir wichtig sind, wie z.B.: 
+                <ul>
+                    <li>Ausweise (Vor- und Rückseite)</li>
+                    <ul>
+                        <li>Personalausweis</li>
+                        <li>Gesundheitskarte</li>
+                        <li>Führerschein</li>
+                        <li>Impfausweis</li>
+                        <li>Rentenausweis</li>
+                    </ul>
+                    <li>Urkunden</li> 
+                        <ul>
+                            <li>Geburtsurkunde</li>
+                            <li>Eheurkunde</li>
+                        </ul>
+                    <li>Vorsorgedokumente</li> 
+                        <ul>
+                            <li>Testament</li>
+                            <li>Vorsorgevollmacht</li>
+                            <li>Patientenverfügung</li>
+                        </ul>         
+                </ul>
+                </li>
+            </ul>
+            <h3>Wie sollte der Dateiname der Dokumente geschrieben sein?</h3>
+            <ul>
+                <li>Da die Filter auf die Dateinamen wirken,
+                    sollten die Dateinamen auf den Inhalt des Dokumentes verweisen und den Namen der Person beinhalten,
+                    für den das Dokument gilt.
+                </li>  
+                <li>Beispiele für die Gestaltung der Dateinamen:</li>
+                <ul>  
+                    <li>Patienverfügung_Winfried.pdf</li>
+                    <li>Personalausweis_Frontseite_Winfried.jpg</li>
+                </ul>
+            </ul>
+            <h3>Welche Dateiformate sind zugelassen?</h3>
+            <li>Für Ausweisdokumente sind die Bildformate .jpg, .jpeg, .tif, .png zugelassen.</li>
+            <li>Für Textdokumente ist das Format .pdf zugelassen.</li>
+            <h3>Filter für die Anzeige der vorhandenen Dokumente:</h3>
+            <li>Um die Anzeige übersichtlich zu gestalten gibt es die Filter
+                 "Dokumenten-Art, Personen, Dokumenten-Format".</li>
+            <li>Die Filter kannst du dir selbst gestalten.</li>
+            <li>In der Zeile "gesetzte Filter" wird der Text angezeigt,
+                 der im Dateinamen stehen muss, wenn das Dokument angezeigt werden soll.</li>
+            <li>Unter vorhandene Dokumente werden die Dokumente angezeigt, für die die Filtereinstellung zutrifft.</li>
+            <li>Mit einem Klick auf den Dateinamen wird das Dokument in einem neuen Browser-Tab angezeigt.</li>
+            <li>Wenn das Dokument nicht mehr aktuell bzw. gültig ist,
+                 dann kannst du mit einem Klick auf "Ersetzen" ein neues aktuelles Dokument einfügen.</li>
+            <li>Wenn das Dokument ersatzlos aus dem Dokumentenspeicher entfernt werden soll, 
+                dann klicks du auf "Löschen".</li>
+            <li>Nach dem Ersetzen oder Löschen eines Dokumentes, solltest du eine Backupdatei erstellen.
+                 Menüpunkt: "Restore/Backup" --> "Dokumente speichern". </li>
+            <h2>Menüpunkt: "Dokumente hinzufügen"</h2>
+            <li>Um mehrere Dokumente in den Dokumentenspeicher hinzufügen,
+                wähle den Menüpunkt "Dokument hinzufügen" --> </li>
+            <li>Erstelle auch hier anschließend eine Backupdatei. Menüpunkt: "Restore/Backup" --> "Dokumente speichern".</li>
+            <h2>Menüpunkt: "Restore/Backup"</h2>
+            <li>Die Dokumente werden lokal auf deinem PC, Laptop, Tablet oder Smartphone im Browser gespeichert.</li>
+            <li>Sie werden nicht in eine Cloude gesendet.</li>
+            <li>Nach dem Ändern von Dokumenten oder nach dem Ändern der Filterparameter
+                 solltest du immer eine Sicherungsdatei - Backupdatei erstellen.</li>
+            <li>Mit Restore kannst du diese Backup-Dateien im Bedarfsfall einlesen.</li>
+            <ul>
+            <li>Der Bedarfsfall kann nach folgenden Aktivitäten eintreten:</li>
+                <ul>
+                    <li>es wurde ein Systemupdate durchgeführt</li>
+                    <li>der Browser-Cach wurde gelöscht</li>
+                    <li>die APP wurde auf einen neuen Computer installiert</li>
+                    <li>die App wurde auf verschiedene Computer installiert</li>
+                </ul>
+            </ul>
+            <h2>Menüpunkt: "Filtergestaltung"</h2>
+            <li>Hier hast du die Möglichkeit die Filter selbst zu gestalten.
+                 Damit kannst du die Filter entsprechend deiner gewählten Dateinamen aufbauen.</li>
+            <li>Die Änderungen trägst du in der rechten Spalte "Geänderte Filterparameter" ein. </li>
+            <li>Zu Beginn steht der Filtername zur Änderung bereit. z.B.: Dokumenten-Art, Personen, Dokumenten-Format</li>
+            <li>Unter dem Filternamen stehen die einzelnen Optionen. z.B.: Ausweis, Führerschein </li>
+            <li>Jede Option besteht aus dem Anzeigename und dem Filtertext.</li>
+            <li>Der Anzeigename kann vom Filtertext abweichen.</li>
+            <li>Nur der Filtertext wird wirksam.
+                 Ein Dokuent wird nur angezeigt, wenn diese Zeichenkette im Dateinamen enthalten ist. </li>
+            <li>Beide Felder werden im Zusammenhang nacheinander geändert.</li>
+            <li>Um eine Option zu ergänzen, klicke bitte auf "Option hinzufügen".</li>
+            <li>Klicke bitte nach dem Ändern auf "Änderungen übernehmen".
+                Erst damit werden deine Änderungen wirksam. </li>
+            <li>Am Ende aller Änderungen erstelle bitte eine "Backup-Datei-Filterparameter"
+                Klicke dazu Backup-Start </li>    
+        </div>
+
+
+    </div>
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js')
+            .then(function(registration) {
+                console.log('Service Worker registriert:', registration);
+            })
+            .catch(function(error) {
+                console.log('Service Worker Registrierung fehlgeschlagen:', error);
+            });
+        }
+    </script>
+    <script src="Hauptverarbeitung.js"></script>
+    <script src="backup-restore.js"></script>  
+    <script src="Filter3-Radio.js"></script>
+    <script src="Filter2-Radio.js"></script>
+    <script src="Filter1-Selekt.js"></script>
+    <script src="Filter-Edit.js"></script>
+  
+</body>
+
+</html>
